@@ -54,7 +54,7 @@ The next behavior we'll be looking at is validation. This is a strange one. In t
 
 That's just plain silly. So `ValidationBehaviour` is going to be deleted and FluentValidation is going to be turned back on.
 
-## Round 5 - Logging
+## Round 6 - Logging
 
 Like performance logging, request logging should be pulled up into the ASP.NET Core pipeline so that all requests are logged.
 
