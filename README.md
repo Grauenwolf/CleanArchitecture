@@ -30,17 +30,18 @@ As it turns out, ASP.NET Core has a built-in system for handling authorization. 
 
 Reviewing the commands and handlers, we do see one that uses the `Authorization` attribute directly. This is the `PurgeTodoListsCommand`. In theory we would move the attribute to the controller method. But since this command is never used, we can just delete it. Which means we can also delete the matching test cases.
 
-## Round 3 - Unhandled Exception Behaviour
+## Round 3 - Unhandled Exception Behavior
 
 To test the `UnhandledExceptionBehaviour`, we start by adding a division by zero to the `GetTodosQueryHandler`. Then we set a break point in both `UnhandledExceptionBehaviour` and `ApiExceptionFilterAttribute` to see which is actually being used. 
  
 And the answer is... both of them. Which means we can combine them. When choosing which of the two to keep, there are a couple considerations.
 
-1. Which has more information avaialble? The `ApiExceptionFilterAttribute` has access to the entire HttpContext, while `UnhandledExceptionBehaviour` only has the `ExportTodosQuery` object and the exception itself.
-2. Which is more broad? The `ApiExceptionFilterAttribute` covers all API requests, `UnhandledExceptionBehaviour` only handles API requests that go through MediatR.
-3. Which is eariler in the request pipeline? Not only does  `UnhandledExceptionBehaviour` only handles requests that go through MediatR, it can't see errors that occur before or after MediatR does its thing. For example, serialization errors won't be caught.
+1. Which has more information available? The `ApiExceptionFilterAttribute` has access to the entire `HttpContext`, while `UnhandledExceptionBehaviour` only has the `ExportTodosQuery` object and the exception itself.
+2. Which is broader? The `ApiExceptionFilterAttribute` covers all API requests, `UnhandledExceptionBehaviour` only handles API requests that go through MediatR.
+3. Which is eariler in the request pipeline? Not only does `UnhandledExceptionBehaviour` only handles requests that go through MediatR, it can't see errors that occur before or after MediatR does its thing. For example, serialization errors won't be caught.
 
-So clearly we should keep `ApiExceptionFilterAttribute` and move the logging `UnhandledExceptionBehaviour` does into it. (Specifically what to log is left as an exercise for the reader.)
+So clearly we should keep `ApiExceptionFilterAttribute` and move the logging `UnhandledExceptionBehaviour` does into it. (Specifically, what to log is left as an exercise for the reader.)
+
 
 
 
