@@ -69,12 +69,14 @@ When working on a refactoring job, it's easy to forget to rerun all of the tests
 
 All of the failing integration tests deal with validation. Which reveals some concerns.
 
-1. The validation logic that can be unit tested is mixed in with the valuidation that requires database access.
+1. The validation logic that can be unit tested is mixed in with the validation that requires database access.
 2. The validation logic for things like missing values can't be tested without attempting to write to the database.
 3. The validation logic tests are intertwined with the MediatR pipeline.
 4. Most of the tests don't check if the correct validation error is returned, only whether or not a validation error happened.
 
 Fixing all of these issues is a bit much for one round. So we're just going to do the minimum needed for getting the tests running. Which means ripping out MediatR and using the validators directly.
+
+
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
