@@ -1,8 +1,8 @@
 # Cleaning Clean Architecture
 
-The purpose of this repository is to investiage "Clean Architecture" and see if it can be improved upon. The goal is to remove complexity without reducing functionality.
+The purpose of this repository is to investigate "Clean Architecture" and see if it can be improved upon. The goal is to remove complexity without reducing functionality.
 
-## Round 0 - Validation
+## Round 0 - Base State Validation
 
 To being with we need to see if the application can be compiled and run. Likewise, we need to verify that all of the automated tests run.
 
@@ -21,6 +21,7 @@ All tests are passing.
 Simply building a .NET Core/Angular application shouldn't require a commerical product such as Docker. And since we're looking at the architecture, not the deployment strategy, we can git rid of it.
 
 To clear a warning message, we'll also update the TypeScript SDK to use Microsoft.TypeScript.MSBuild.
+
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
