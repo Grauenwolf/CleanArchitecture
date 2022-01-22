@@ -9,9 +9,12 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
 
     private readonly IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers;
+    private readonly ILogger _logger;
 
-    public ApiExceptionFilterAttribute()
+    public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger)
     {
+        _logger = logger;
+
         // Register known exception types and handlers.
         _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
@@ -24,6 +27,9 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     public override void OnException(ExceptionContext context)
     {
+        _logger.LogError(context.Exception, $"CleanArchitecture Request: Unhandled Exception for Request {context.ActionDescriptor.DisplayName}");
+
+
         HandleException(context);
 
         base.OnException(context);
