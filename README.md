@@ -1,3 +1,24 @@
+# Cleaning Clean Architecture
+
+The purpose of this repository is to investiage "Clean Architecture" and see if it can be improved upon. The goal is to remove complexity without reducing functionality.
+
+## Round 0 - Validation
+
+To being with we need to see if the application can be compiled and run. Likewise, we need to verify that all of the automated tests run.
+
+The first hurdle is Docker. The application won't compile without it. So Docker Desktop needs to be installed, as well as the Linux Subsystem for Windows.
+
+Next is Node. The application doesn't run under the current version of node (17.4.0). But according to the error messages, we can roll back to the 14.x series. At the time of this writing, 14.18.3 is the latest version that works.
+
+The .NET Core template is broken, so you'll need to manually start the Angular frontend using `npm start` from the ClientApp folder.
+
+All tests are passing.
+
+
+
+
+
+
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
  
  # Clean Architecture Solution Template
