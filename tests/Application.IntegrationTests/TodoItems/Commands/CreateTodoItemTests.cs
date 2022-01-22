@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Application.Common.Exceptions;
-using CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem;
+﻿using CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem;
 using CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
 using CleanArchitecture.Domain.Entities;
 using FluentAssertions;
@@ -14,10 +13,12 @@ public class CreateTodoItemTests : TestBase
     [Test]
     public async Task ShouldRequireMinimumFields()
     {
+        var validator = new CreateTodoItemCommandValidator();
+
         var command = new CreateTodoItemCommand();
 
-        await FluentActions.Invoking(() =>
-            SendAsync(command)).Should().ThrowAsync<ValidationException>();
+        var result = await validator.ValidateAsync(command);
+        Assert.IsFalse(result.IsValid);
     }
 
     [Test]

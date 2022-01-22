@@ -2,7 +2,9 @@
 using CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
 using CleanArchitecture.Application.TodoLists.Commands.UpdateTodoList;
 using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Infrastructure.Persistence;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace CleanArchitecture.Application.IntegrationTests.TodoLists.Commands;
@@ -21,6 +23,8 @@ public class UpdateTodoListTests : TestBase
     [Test]
     public async Task ShouldRequireUniqueTitle()
     {
+
+        //Setup
         var listId = await SendAsync(new CreateTodoListCommand
         {
             Title = "New List"
@@ -31,16 +35,21 @@ public class UpdateTodoListTests : TestBase
             Title = "Other List"
         });
 
+
+        //Test
+        using var scope = Testing.ScopeFactory.CreateScope();
+        var validator = new UpdateTodoListCommandValidator(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
+
         var command = new UpdateTodoListCommand
         {
             Id = listId,
             Title = "Other List"
         };
 
-        (await FluentActions.Invoking(() =>
-            SendAsync(command))
-                .Should().ThrowAsync<ValidationException>().Where(ex => ex.Errors.ContainsKey("Title")))
-                .And.Errors["Title"].Should().Contain("The specified title already exists.");
+        var result = await validator.ValidateAsync(command);
+        Assert.IsFalse(result.IsValid);
+
+        Assert.IsTrue(result.Errors.Any(e => e.PropertyName == "Title" && e.ErrorMessage == "The specified title already exists."));
     }
 
     [Test]

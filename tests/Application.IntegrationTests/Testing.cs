@@ -77,6 +77,8 @@ public class Testing
         context.Database.Migrate();
     }
 
+    internal static IServiceScopeFactory ScopeFactory => _scopeFactory;
+
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
         using var scope = _scopeFactory.CreateScope();

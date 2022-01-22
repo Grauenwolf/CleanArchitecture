@@ -1,7 +1,8 @@
-﻿using CleanArchitecture.Application.Common.Exceptions;
-using CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
+﻿using CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
 using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Infrastructure.Persistence;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace CleanArchitecture.Application.IntegrationTests.TodoLists.Commands;
@@ -13,25 +14,37 @@ public class CreateTodoListTests : TestBase
     [Test]
     public async Task ShouldRequireMinimumFields()
     {
+        using var scope = Testing.ScopeFactory.CreateScope();
+        var validator = new CreateTodoListCommandValidator(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
+
         var command = new CreateTodoListCommand();
-        await FluentActions.Invoking(() => SendAsync(command)).Should().ThrowAsync<ValidationException>();
+
+        var result = await validator.ValidateAsync(command);
+        Assert.IsFalse(result.IsValid);
+
     }
 
     [Test]
     public async Task ShouldRequireUniqueTitle()
     {
+        //Setup
         await SendAsync(new CreateTodoListCommand
         {
             Title = "Shopping"
         });
+
+
+        //Test
+        using var scope = Testing.ScopeFactory.CreateScope();
+        var validator = new CreateTodoListCommandValidator(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
 
         var command = new CreateTodoListCommand
         {
             Title = "Shopping"
         };
 
-        await FluentActions.Invoking(() =>
-            SendAsync(command)).Should().ThrowAsync<ValidationException>();
+        var result = await validator.ValidateAsync(command);
+        Assert.IsFalse(result.IsValid);
     }
 
     [Test]
