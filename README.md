@@ -16,6 +16,9 @@ All tests are passing.
 
 
 
+## Round 1 - Removing Docker
+
+Simply building a .NET Core/Angular application shouldn't require a commerical product such as Docker. And since we're looking at the architecture, not the deployment strategy, we can git rid of it.
 
 
 
