@@ -6,7 +6,6 @@ using CleanArchitecture.WebUI.Filters;
 using CleanArchitecture.WebUI.Middleware;
 using CleanArchitecture.WebUI.Services;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 
@@ -38,13 +37,14 @@ public class Startup
 
         services.AddControllersWithViews(options =>
             options.Filters.Add<ApiExceptionFilterAttribute>())
-                .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
+                .AddFluentValidation();
+
 
         services.AddRazorPages();
 
-        // Customise default API behaviour
-        services.Configure<ApiBehaviorOptions>(options =>
-            options.SuppressModelStateInvalidFilter = true);
+        //// Customise default API behaviour
+        //services.Configure<ApiBehaviorOptions>(options =>
+        //    options.SuppressModelStateInvalidFilter = true);
 
         // In production, the Angular files will be served from this directory
         services.AddSpaStaticFiles(configuration =>

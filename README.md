@@ -48,6 +48,11 @@ Just like exception logging should be handled in the ASP.NET Core pipeline, so s
 
 For this we'll use ASP.NET Core middleware. For simple use cases, the `app.Use` method can be employed to create ad-hoc middleware from a function. But it is cleaner to create a separate class.
 
+## Round 5 - Validation
+
+The next behavior we'll be looking at is validation. This is a strange one. In the startup logic for ASP.NET Core, FluentValidation was added and then disabled. Then a MediatR behavior called `ValidationBehaviour` was created to do the same thing.
+
+That's just plain silly. So `ValidationBehaviour` is going to be deleted and FluentValidation is going to be turned back on.
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
