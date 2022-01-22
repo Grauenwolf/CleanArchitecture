@@ -1,8 +1,8 @@
 # Cleaning Clean Architecture
 
-The purpose of this repository is to investiage "Clean Architecture" and see if it can be improved upon. The goal is to remove complexity without reducing functionality.
+The purpose of this repository is to investigate "Clean Architecture" and see if it can be improved upon. The goal is to remove complexity without reducing functionality.
 
-## Round 0 - Validation
+## Round 0 - Base State Validation
 
 To being with we need to see if the application can be compiled and run. Likewise, we need to verify that all of the automated tests run.
 
@@ -13,6 +13,7 @@ Next is Node. The application doesn't run under the current version of node (17.
 The .NET Core template is broken, so you'll need to manually start the Angular frontend using `npm start` from the ClientApp folder.
 
 All tests are passing.
+
 
 
 
