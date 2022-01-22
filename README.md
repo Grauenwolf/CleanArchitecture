@@ -42,6 +42,14 @@ And the answer is... both of them. Which means we can combine them. When choosin
 
 So clearly we should keep `ApiExceptionFilterAttribute` and move the logging `UnhandledExceptionBehaviour` does into it. (Specifically what to log is left as an exercise for the reader.)
 
+## Round 4 - Performance Logging
+
+Just like exception logging should be handled in the ASP.NET Core pipeline, so should performance logging.
+
+For this we'll use ASP.NET Core middleware. For simple use cases, the `app.Use` method can be employed to create ad-hoc middleware from a function. But it is cleaner to create a separate class.
+
+
+
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
  
  # Clean Architecture Solution Template
