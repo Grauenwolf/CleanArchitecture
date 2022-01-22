@@ -22,6 +22,15 @@ Simply building a .NET Core/Angular application shouldn't require a commerical p
 
 To clear a warning message, we'll also update the TypeScript SDK to use Microsoft.TypeScript.MSBuild.
 
+## Round 2 - Authorization Behavior
+
+Looking at the `AuthorizationBehaviour` class, I noticed that it was never being hit. All of my requests that required authorization, for example `TodoListsController.Get`, were being aborted before I got this far.
+
+As it turns out, ASP.NET Core has a built-in system for handling authorization. And this project is using it. So the `AuthorizationBehaviour` class is completely redundant and can be removed.
+
+Reviewing the commands and handlers, we do see one that uses the `Authorization` attribute directly. This is the `PurgeTodoListsCommand`. In theory we would move the attribute to the controller method. But since this command is never used, we can just delete it. Which means we can also delete the matching test cases.
+ 
+
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
  
