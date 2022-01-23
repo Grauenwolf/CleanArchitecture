@@ -152,6 +152,10 @@ Likewise, we can remove the parameters on the controllers that are not needed. F
 
 Removing the `id` parameter will cause a breaking change and the typescript code will have to be updated to match. This is only acceptable because both are in the same code base and a simultaneous release is possible.
 
+Round 15 – Remove MediatR
+
+At this point the last remnants of MediatR can be removed.  
+
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
