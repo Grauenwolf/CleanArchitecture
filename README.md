@@ -44,9 +44,6 @@ And the answer is... both of them. Which means we can combine them. When choosin
 
 So clearly we should keep `ApiExceptionFilterAttribute` and move the logging `UnhandledExceptionBehaviour` does into it. (Specifically, what to log is left as an exercise for the reader.)
 
-
-
-
 ## Round 4 - Performance Logging
 
 Just like exception logging should be handled in the ASP.NET Core pipeline, so should performance logging.
@@ -104,6 +101,12 @@ Some will object and say that they are now "tightly bound" and by using MediatR 
 
 This will be messy at first, as each handler will need to be registered in ASP.NET Core’s dependency injection and the controller’s constructor. 
 
+
+## Round 10 - Cleaning up the Handlers
+
+The only reason for having one method per handler class was to satisfy the MediatR design pattern. There is no real advantage for having them divided up like that and it makes it harder to see places where common functionality can be factored out.
+ 
+The method names will have to be changed so that they are unique within a class. But when reading stack traces, it is better to have methods named `Create` or `Update` than having everything generically called “Handle’.
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />

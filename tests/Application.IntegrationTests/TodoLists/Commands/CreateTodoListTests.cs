@@ -1,4 +1,6 @@
-﻿using CleanArchitecture.Application.TodoLists;
+﻿using AutoMapper;
+using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Application.TodoLists;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Infrastructure.Persistence;
 using FluentAssertions;
@@ -14,7 +16,7 @@ public class CreateTodoListTests : TestBase
     [Test]
     public async Task ShouldRequireMinimumFields()
     {
-        using var scope = Testing.ScopeFactory.CreateScope();
+        using var scope = ScopeFactory.CreateScope();
         var validator = new CreateTodoListCommandValidator(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
 
         var command = new CreateTodoListCommand();
@@ -28,14 +30,22 @@ public class CreateTodoListTests : TestBase
     public async Task ShouldRequireUniqueTitle()
     {
         //Setup
-        await SendAsync(new CreateTodoListCommand
+        var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+
+
+        await service.Create(new CreateTodoListCommand
         {
             Title = "Shopping"
-        });
+        }, CancellationToken.None);
 
 
         //Test
-        using var scope = Testing.ScopeFactory.CreateScope();
         var validator = new CreateTodoListCommandValidator(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
 
         var command = new CreateTodoListCommand
@@ -50,14 +60,23 @@ public class CreateTodoListTests : TestBase
     [Test]
     public async Task ShouldCreateTodoList()
     {
+        //Setup
         var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+
+        //Test
 
         var command = new CreateTodoListCommand
         {
             Title = "Tasks"
         };
 
-        var id = await SendAsync(command);
+        var id = await service.Create(command, CancellationToken.None);
 
         var list = await FindAsync<TodoList>(id);
 

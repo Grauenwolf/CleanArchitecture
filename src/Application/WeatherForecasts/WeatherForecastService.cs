@@ -1,15 +1,13 @@
-﻿using MediatR;
+﻿namespace CleanArchitecture.Application.WeatherForecasts;
 
-namespace CleanArchitecture.Application.WeatherForecasts;
-
-public class GetWeatherForecastsQueryHandler : IRequestHandler<GetWeatherForecastsQuery, IEnumerable<WeatherForecast>>
+public class WeatherForecastService
 {
     private static readonly string[] Summaries = new[]
     {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-    public Task<IEnumerable<WeatherForecast>> Handle(GetWeatherForecastsQuery request, CancellationToken cancellationToken)
+    public Task<IEnumerable<WeatherForecast>> GetForecasts(GetWeatherForecastsQuery request, CancellationToken cancellationToken)
     {
         var rng = new Random();
 

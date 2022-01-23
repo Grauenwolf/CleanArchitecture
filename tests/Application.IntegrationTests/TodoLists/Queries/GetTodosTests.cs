@@ -1,7 +1,11 @@
-﻿using CleanArchitecture.Application.TodoLists;
+﻿using AutoMapper;
+using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Application.TodoLists;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Domain.ValueObjects;
+using CleanArchitecture.Infrastructure.Persistence;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace CleanArchitecture.Application.IntegrationTests.TodoLists.Queries;
@@ -13,9 +17,17 @@ public class GetTodosTests : TestBase
     [Test]
     public async Task ShouldReturnPriorityLevels()
     {
+        var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+
         var query = new GetTodosQuery();
 
-        var result = await SendAsync(query);
+        var result = await service.Get(query, CancellationToken.None);
 
         result.PriorityLevels.Should().NotBeEmpty();
     }
@@ -23,6 +35,14 @@ public class GetTodosTests : TestBase
     [Test]
     public async Task ShouldReturnAllListsAndItems()
     {
+        var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+
         await AddAsync(new TodoList
         {
             Title = "Shopping",
@@ -41,7 +61,7 @@ public class GetTodosTests : TestBase
 
         var query = new GetTodosQuery();
 
-        var result = await SendAsync(query);
+        var result = await service.Get(query, CancellationToken.None);
 
         result.Lists.Should().HaveCount(1);
         result.Lists.First().Items.Should().HaveCount(7);

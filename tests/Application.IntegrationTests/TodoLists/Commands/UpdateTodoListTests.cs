@@ -1,4 +1,6 @@
-﻿using CleanArchitecture.Application.Common.Exceptions;
+﻿using AutoMapper;
+using CleanArchitecture.Application.Common.Exceptions;
+using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.TodoLists;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Infrastructure.Persistence;
@@ -15,8 +17,16 @@ public class UpdateTodoListTests : TestBase
     [Test]
     public async Task ShouldRequireValidTodoListId()
     {
+        var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+
         var command = new UpdateTodoListCommand { Id = 99, Title = "New Title" };
-        await FluentActions.Invoking(() => SendAsync(command)).Should().ThrowAsync<NotFoundException>();
+        await FluentActions.Invoking(() => service.Update(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -24,19 +34,28 @@ public class UpdateTodoListTests : TestBase
     {
 
         //Setup
-        var listId = await SendAsync(new CreateTodoListCommand
+        //Setup
+        var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+
+
+        var listId = await service.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        });
+        }, CancellationToken.None);
 
-        await SendAsync(new CreateTodoListCommand
+        await service.Create(new CreateTodoListCommand
         {
             Title = "Other List"
-        });
+        }, CancellationToken.None);
 
 
         //Test
-        using var scope = Testing.ScopeFactory.CreateScope();
         var validator = new UpdateTodoListCommandValidator(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
 
         var command = new UpdateTodoListCommand
@@ -55,11 +74,18 @@ public class UpdateTodoListTests : TestBase
     public async Task ShouldUpdateTodoList()
     {
         var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
 
-        var listId = await SendAsync(new CreateTodoListCommand
+
+        var listId = await service.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        });
+        }, CancellationToken.None);
 
         var command = new UpdateTodoListCommand
         {
@@ -67,7 +93,7 @@ public class UpdateTodoListTests : TestBase
             Title = "Updated List Title"
         };
 
-        await SendAsync(command);
+        await service.Update(command, CancellationToken.None);
 
         var list = await FindAsync<TodoList>(listId);
 

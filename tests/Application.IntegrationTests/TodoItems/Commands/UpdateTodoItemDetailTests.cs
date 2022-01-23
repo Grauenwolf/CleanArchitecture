@@ -1,9 +1,13 @@
-﻿using CleanArchitecture.Application.Common.Exceptions;
+﻿using AutoMapper;
+using CleanArchitecture.Application.Common.Exceptions;
+using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.TodoItems;
 using CleanArchitecture.Application.TodoLists;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Domain.Enums;
+using CleanArchitecture.Infrastructure.Persistence;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace CleanArchitecture.Application.IntegrationTests.TodoItems.Commands;
@@ -15,25 +19,50 @@ public class UpdateTodoItemDetailTests : TestBase
     [Test]
     public async Task ShouldRequireValidTodoItemId()
     {
+        //Setup
+        var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service1 = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+        var service2 = new TodoItemService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>()
+            );
+
         var command = new UpdateTodoItemCommand { Id = 99, Title = "New Title" };
-        await FluentActions.Invoking(() => SendAsync(command)).Should().ThrowAsync<NotFoundException>();
+        await FluentActions.Invoking(() => service2.Update(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
     public async Task ShouldUpdateTodoItem()
     {
+        //Setup
         var userId = await RunAsDefaultUserAsync();
+        using var scope = ScopeFactory.CreateScope();
+        var service1 = new TodoListService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>(),
+            scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
+            );
+        var service2 = new TodoItemService(
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+            scope.ServiceProvider.GetRequiredService<IMapper>()
+            );
 
-        var listId = await SendAsync(new CreateTodoListCommand
+
+        var listId = await service1.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        });
+        }, CancellationToken.None);
 
-        var itemId = await SendAsync(new CreateTodoItemCommand
+        var itemId = await service2.Create(new CreateTodoItemCommand
         {
             ListId = listId,
             Title = "New Item"
-        });
+        }, CancellationToken.None);
 
         var command = new UpdateTodoItemDetailCommand
         {
@@ -43,7 +72,7 @@ public class UpdateTodoItemDetailTests : TestBase
             Priority = PriorityLevel.High
         };
 
-        await SendAsync(command);
+        await service2.Update(command, CancellationToken.None);
 
         var item = await FindAsync<TodoItem>(itemId);
 

@@ -16,18 +16,10 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
-        services.AddSingleton<GetWeatherForecastsQueryHandler>();
+        services.AddSingleton<WeatherForecastService>();
 
-        services.AddTransient<GetTodoItemsWithPaginationQueryHandler>();
-        services.AddTransient<CreateTodoItemCommandHandler>();
-        services.AddTransient<UpdateTodoItemCommandHandler>();
-        services.AddTransient<UpdateTodoItemDetailCommandHandler>();
-        services.AddTransient<DeleteTodoItemCommandHandler>();
-        services.AddTransient<GetTodosQueryHandler>();
-        services.AddTransient<ExportTodosQueryHandler>();
-        services.AddTransient<CreateTodoListCommandHandler>();
-        services.AddTransient<UpdateTodoListCommandHandler>();
-        services.AddTransient<DeleteTodoListCommandHandler>();
+        services.AddTransient<TodoItemService>();
+        services.AddTransient<TodoListService>();
 
 
         return services;

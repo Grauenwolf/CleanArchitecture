@@ -8,41 +8,23 @@ namespace CleanArchitecture.WebUI.Controllers;
 [Authorize]
 public class TodoItemsController : ApiControllerBase
 {
-    readonly GetTodoItemsWithPaginationQueryHandler _getTodoItemsWithPaginationQueryHandler;
-    readonly CreateTodoItemCommandHandler _createTodoItemCommandHandler;
-    readonly UpdateTodoItemCommandHandler _updateTodoItemCommandHandler;
-    readonly UpdateTodoItemDetailCommandHandler _updateTodoItemDetailCommandHandler;
-    readonly DeleteTodoItemCommandHandler _deleteTodoItemCommandHandler;
+    readonly TodoItemService _todoItemService;
 
-
-
-    public TodoItemsController(
-        GetTodoItemsWithPaginationQueryHandler getTodoItemsWithPaginationQueryHandler,
-        CreateTodoItemCommandHandler createTodoItemCommandHandler,
-        UpdateTodoItemCommandHandler updateTodoItemCommandHandler,
-        UpdateTodoItemDetailCommandHandler updateTodoItemDetailCommandHandler,
-        DeleteTodoItemCommandHandler deleteTodoItemCommandHandler
-
-        )
+    public TodoItemsController(TodoItemService todoItemService)
     {
-        _deleteTodoItemCommandHandler = deleteTodoItemCommandHandler;
-        _updateTodoItemDetailCommandHandler = updateTodoItemDetailCommandHandler;
-        _updateTodoItemCommandHandler = updateTodoItemCommandHandler;
-        _createTodoItemCommandHandler = createTodoItemCommandHandler;
-        _getTodoItemsWithPaginationQueryHandler = getTodoItemsWithPaginationQueryHandler;
-
+        _todoItemService = todoItemService;
     }
 
     [HttpGet]
     public async Task<ActionResult<PaginatedList<TodoItemBriefDto>>> GetTodoItemsWithPagination([FromQuery] GetTodoItemsWithPaginationQuery query)
     {
-        return await _getTodoItemsWithPaginationQueryHandler.Handle(query, CancellationToken.None);
+        return await _todoItemService.Get(query, CancellationToken.None);
     }
 
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateTodoItemCommand command)
     {
-        return await _createTodoItemCommandHandler.Handle(command, CancellationToken.None);
+        return await _todoItemService.Create(command, CancellationToken.None);
     }
 
     [HttpPut("{id}")]
@@ -53,7 +35,7 @@ public class TodoItemsController : ApiControllerBase
             return BadRequest();
         }
 
-        await _updateTodoItemCommandHandler.Handle(command, CancellationToken.None);
+        await _todoItemService.Update(command, CancellationToken.None);
 
         return NoContent();
     }
@@ -66,7 +48,7 @@ public class TodoItemsController : ApiControllerBase
             return BadRequest();
         }
 
-        await _updateTodoItemDetailCommandHandler.Handle(command, CancellationToken.None);
+        await _todoItemService.Update(command, CancellationToken.None);
 
 
         return NoContent();
@@ -75,7 +57,7 @@ public class TodoItemsController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _deleteTodoItemCommandHandler.Handle(new DeleteTodoItemCommand { Id = id }, CancellationToken.None);
+        await _todoItemService.Delete(new DeleteTodoItemCommand { Id = id }, CancellationToken.None);
 
         return NoContent();
     }

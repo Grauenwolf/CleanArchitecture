@@ -5,15 +5,15 @@ namespace CleanArchitecture.WebUI.Controllers;
 
 public class WeatherForecastController : ApiControllerBase
 {
-    readonly GetWeatherForecastsQueryHandler _getWeatherForecastsQueryHandler;
-    public WeatherForecastController(GetWeatherForecastsQueryHandler getWeatherForecastsQueryHandler)
+    readonly WeatherForecastService _weatherForecastService;
+    public WeatherForecastController(WeatherForecastService weatherForecastService)
     {
-        _getWeatherForecastsQueryHandler = getWeatherForecastsQueryHandler;
+        _weatherForecastService = weatherForecastService;
     }
 
     [HttpGet]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
-        return await _getWeatherForecastsQueryHandler.Handle(new GetWeatherForecastsQuery(), CancellationToken.None);
+        return await _weatherForecastService.GetForecasts(new GetWeatherForecastsQuery(), CancellationToken.None);
     }
 }
