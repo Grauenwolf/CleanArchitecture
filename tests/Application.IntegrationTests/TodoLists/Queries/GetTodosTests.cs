@@ -25,9 +25,7 @@ public class GetTodosTests : TestBase
             scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
             );
 
-        var query = new GetTodosQuery();
-
-        var result = await service.Get(query, CancellationToken.None);
+        var result = await service.Get(CancellationToken.None);
 
         result.PriorityLevels.Should().NotBeEmpty();
     }
@@ -59,9 +57,7 @@ public class GetTodosTests : TestBase
                     }
         });
 
-        var query = new GetTodosQuery();
-
-        var result = await service.Get(query, CancellationToken.None);
+        var result = await service.Get(CancellationToken.None);
 
         result.Lists.Should().HaveCount(1);
         result.Lists.First().Items.Should().HaveCount(7);

@@ -38,7 +38,7 @@ public class TodoListService
         return Unit.Value;
     }
 
-    public async Task<TodosVm> Get(GetTodosQuery request, CancellationToken cancellationToken)
+    public async Task<TodosVm> Get(CancellationToken cancellationToken)
     {
         return new TodosVm
         {

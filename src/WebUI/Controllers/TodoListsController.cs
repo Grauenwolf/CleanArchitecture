@@ -18,7 +18,7 @@ public class TodoListsController : ApiControllerBase
     [HttpGet]
     public async Task<ActionResult<TodosVm>> Get(CancellationToken cancellationToken)
     {
-        return await _todoListService.Get(new GetTodosQuery(), cancellationToken);
+        return await _todoListService.Get(cancellationToken);
     }
 
     [HttpGet("{id}")]
