@@ -14,6 +14,6 @@ public class WeatherForecastController : ApiControllerBase
     [HttpGet]
     public async Task<IEnumerable<WeatherForecast>> Get(CancellationToken cancellationToken)
     {
-        return await _weatherForecastService.GetForecasts(new GetWeatherForecastsQuery(), cancellationToken);
+        return await _weatherForecastService.GetForecasts(cancellationToken);
     }
 }

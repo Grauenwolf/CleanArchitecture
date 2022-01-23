@@ -7,7 +7,7 @@ public class WeatherForecastService
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-    public Task<IEnumerable<WeatherForecast>> GetForecasts(GetWeatherForecastsQuery request, CancellationToken cancellationToken)
+    public Task<IEnumerable<WeatherForecast>> GetForecasts(CancellationToken cancellationToken)
     {
         var rng = new Random();
 
