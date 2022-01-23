@@ -144,6 +144,14 @@ Now you may be thinking, “well at least I get notifications for inserts and de
 All in all, this was a poorly conceived feature with an equally bad implementation and it needs to be removed before anything important takes a dependency on it.
 
 
+Round 14 - Realign Controller and Service Parameters
+
+There are a couple small classes that no longer a purpose. Originally they were used as messages for MediatR, but since that is no longer being used we can pass the parameters directly from the controller classes to the service classes.
+
+Likewise, we can remove the parameters on the controllers that are not needed. For example, the `Update` method on `TodoListsController` receives two copies of the `id` parameter, one in the route and one in the command object. At best this duplication is an annoyance, as both the client and server need to ensure both copies are populated. 
+
+Removing the `id` parameter will cause a breaking change and the typescript code will have to be updated to match. This is only acceptable because both are in the same code base and a simultaneous release is possible.
+
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
