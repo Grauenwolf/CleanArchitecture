@@ -117,13 +117,13 @@ Fixing this is fairly easy. Simply add a `CancellationToken` parameter to each c
 
 Generally speaking, only read methods should allow cancellation. Write operations can run into some difficult timing issues if canceled, and should be fast enough that cancellation is never necessary. So for the write method, the cancellation token will be removed from the service class.
 
-Round 12 - Remove the Unnecessary Event Handlers
+## Round 12 - Remove the Unnecessary Event Handlers
 
 The TodoItemCompletedEventHandler and TodoItemCreatedEventHandler classes don’t actually do anything. The log message they create serves no purpose, and if it was useful, it could have been handled by the service class. 
 
 While it is possible that an internal service bus is needed for a project, in this case it is not. And even if a need arises in the future, the information needed in the events may be very different than what’s available today. Which means the current messages will have to be rewritten anyways or the new feature that needs them will have to accept a compromise. This is a risk of trying to predict future needs without a clear roadmap. 
 
-Round 13 - Remove the Layer Violation
+## Round 13 - Remove the Layer Violation
 
 The persistence layer, specifically the EF Core DB context, has a dependency on the business logic layer and MediatR. This is used to signal status events such as the creation or completion of a `ToDoItem`. Aside from the fact that nothing listens for these events, that kind of logic shouldn’t be hidden inside the persistence layer. Like database triggers, there is no way to know that these exist in the `DbContext` unless you already know to go searching for them. 
 
