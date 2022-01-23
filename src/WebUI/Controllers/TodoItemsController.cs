@@ -8,16 +8,41 @@ namespace CleanArchitecture.WebUI.Controllers;
 [Authorize]
 public class TodoItemsController : ApiControllerBase
 {
+    readonly GetTodoItemsWithPaginationQueryHandler _getTodoItemsWithPaginationQueryHandler;
+    readonly CreateTodoItemCommandHandler _createTodoItemCommandHandler;
+    readonly UpdateTodoItemCommandHandler _updateTodoItemCommandHandler;
+    readonly UpdateTodoItemDetailCommandHandler _updateTodoItemDetailCommandHandler;
+    readonly DeleteTodoItemCommandHandler _deleteTodoItemCommandHandler;
+
+
+
+    public TodoItemsController(
+        GetTodoItemsWithPaginationQueryHandler getTodoItemsWithPaginationQueryHandler,
+        CreateTodoItemCommandHandler createTodoItemCommandHandler,
+        UpdateTodoItemCommandHandler updateTodoItemCommandHandler,
+        UpdateTodoItemDetailCommandHandler updateTodoItemDetailCommandHandler,
+        DeleteTodoItemCommandHandler deleteTodoItemCommandHandler
+
+        )
+    {
+        _deleteTodoItemCommandHandler = deleteTodoItemCommandHandler;
+        _updateTodoItemDetailCommandHandler = updateTodoItemDetailCommandHandler;
+        _updateTodoItemCommandHandler = updateTodoItemCommandHandler;
+        _createTodoItemCommandHandler = createTodoItemCommandHandler;
+        _getTodoItemsWithPaginationQueryHandler = getTodoItemsWithPaginationQueryHandler;
+
+    }
+
     [HttpGet]
     public async Task<ActionResult<PaginatedList<TodoItemBriefDto>>> GetTodoItemsWithPagination([FromQuery] GetTodoItemsWithPaginationQuery query)
     {
-        return await Mediator.Send(query);
+        return await _getTodoItemsWithPaginationQueryHandler.Handle(query, CancellationToken.None);
     }
 
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateTodoItemCommand command)
     {
-        return await Mediator.Send(command);
+        return await _createTodoItemCommandHandler.Handle(command, CancellationToken.None);
     }
 
     [HttpPut("{id}")]
@@ -28,7 +53,7 @@ public class TodoItemsController : ApiControllerBase
             return BadRequest();
         }
 
-        await Mediator.Send(command);
+        await _updateTodoItemCommandHandler.Handle(command, CancellationToken.None);
 
         return NoContent();
     }
@@ -41,7 +66,8 @@ public class TodoItemsController : ApiControllerBase
             return BadRequest();
         }
 
-        await Mediator.Send(command);
+        await _updateTodoItemDetailCommandHandler.Handle(command, CancellationToken.None);
+
 
         return NoContent();
     }
@@ -49,7 +75,7 @@ public class TodoItemsController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await Mediator.Send(new DeleteTodoItemCommand { Id = id });
+        await _deleteTodoItemCommandHandler.Handle(new DeleteTodoItemCommand { Id = id }, CancellationToken.None);
 
         return NoContent();
     }

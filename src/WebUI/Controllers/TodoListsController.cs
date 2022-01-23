@@ -7,16 +7,38 @@ namespace CleanArchitecture.WebUI.Controllers;
 [Authorize]
 public class TodoListsController : ApiControllerBase
 {
+    readonly GetTodosQueryHandler _getTodosQueryHandler;
+    readonly ExportTodosQueryHandler _exportTodosQueryHandler;
+    readonly CreateTodoListCommandHandler _createTodoListCommandHandler;
+    readonly UpdateTodoListCommandHandler _updateTodoListCommandHandler;
+    readonly DeleteTodoListCommandHandler _deleteTodoListCommandHandler;
+
+    public TodoListsController(
+        GetTodosQueryHandler getTodosQueryHandler,
+        ExportTodosQueryHandler exportTodosQueryHandler,
+        CreateTodoListCommandHandler createTodoListCommandHandler,
+        UpdateTodoListCommandHandler updateTodoListCommandHandler,
+        DeleteTodoListCommandHandler deleteTodoListCommandHandler
+        )
+    {
+        _getTodosQueryHandler = getTodosQueryHandler;
+        _exportTodosQueryHandler = exportTodosQueryHandler;
+        _createTodoListCommandHandler = createTodoListCommandHandler;
+        _updateTodoListCommandHandler = updateTodoListCommandHandler;
+        _deleteTodoListCommandHandler = deleteTodoListCommandHandler;
+    }
+
+
     [HttpGet]
     public async Task<ActionResult<TodosVm>> Get()
     {
-        return await Mediator.Send(new GetTodosQuery());
+        return await _getTodosQueryHandler.Handle(new GetTodosQuery(), CancellationToken.None);
     }
 
     [HttpGet("{id}")]
     public async Task<FileResult> Get(int id)
     {
-        var vm = await Mediator.Send(new ExportTodosQuery { ListId = id });
+        var vm = await _exportTodosQueryHandler.Handle(new ExportTodosQuery { ListId = id }, CancellationToken.None);
 
         return File(vm.Content, vm.ContentType, vm.FileName);
     }
@@ -24,7 +46,7 @@ public class TodoListsController : ApiControllerBase
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateTodoListCommand command)
     {
-        return await Mediator.Send(command);
+        return await _createTodoListCommandHandler.Handle(command, CancellationToken.None);
     }
 
     [HttpPut("{id}")]
@@ -35,7 +57,7 @@ public class TodoListsController : ApiControllerBase
             return BadRequest();
         }
 
-        await Mediator.Send(command);
+        await _updateTodoListCommandHandler.Handle(command, CancellationToken.None);
 
         return NoContent();
     }
@@ -43,7 +65,7 @@ public class TodoListsController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await Mediator.Send(new DeleteTodoListCommand { Id = id });
+        await _deleteTodoListCommandHandler.Handle(new DeleteTodoListCommand { Id = id }, CancellationToken.None);
 
         return NoContent();
     }

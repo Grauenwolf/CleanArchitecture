@@ -96,6 +96,13 @@ Those five namespaces could be rolled into one to reduce verbosity and make it e
 
 At the same time, we'll break up the files so that each has only one class. There is no reason to put multiple classes in one file and it makes them harder to find in the solution explorer.
 
+## Round 9 - Cleaning up the Controllers
+
+Now that we are no longer relying on MediatR for cross-cutting concerns, we can strip it out from the controllers. This will make the dependency between the controllers and handlers explicit rather than hidden.
+
+Some will object and say that they are now "tightly bound" and by using MediatR they are "loosely coupled". They are wrong. No amount of indirection will change the fact that the controllers and handlers tightly coupled.
+
+This will be messy at first, as each handler will need to be registered in ASP.NET Core’s dependency injection and the controller’s constructor. 
 
 
 
