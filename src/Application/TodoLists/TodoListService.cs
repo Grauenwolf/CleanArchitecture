@@ -24,8 +24,7 @@ public class TodoListService
 
     public async Task<Unit> Update(UpdateTodoListCommand request)
     {
-        var entity = await _context.TodoLists
-            .FindAsync(new object[] { request.Id });
+        var entity = await _context.TodoLists.FindAsync(request.Id);
 
         if (entity == null)
         {
@@ -84,15 +83,15 @@ public class TodoListService
         return entity.Id;
     }
 
-    public async Task<Unit> Delete(DeleteTodoListCommand request)
+    public async Task<Unit> Delete(int id)
     {
         var entity = await _context.TodoLists
-            .Where(l => l.Id == request.Id)
+            .Where(l => l.Id == id)
             .SingleOrDefaultAsync();
 
         if (entity == null)
         {
-            throw new NotFoundException(nameof(TodoList), request.Id);
+            throw new NotFoundException(nameof(TodoList), id);
         }
 
         _context.TodoLists.Remove(entity);

@@ -27,27 +27,17 @@ public class TodoItemsController : ApiControllerBase
         return await _todoItemService.Create(command);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> Update(int id, UpdateTodoItemCommand command)
+    [HttpPut()]
+    public async Task<ActionResult> Update(UpdateTodoItemCommand command)
     {
-        if (id != command.Id)
-        {
-            return BadRequest();
-        }
-
         await _todoItemService.Update(command);
 
         return NoContent();
     }
 
     [HttpPut("[action]")]
-    public async Task<ActionResult> UpdateItemDetails(int id, UpdateTodoItemDetailCommand command)
+    public async Task<ActionResult> UpdateItemDetails(UpdateTodoItemDetailCommand command)
     {
-        if (id != command.Id)
-        {
-            return BadRequest();
-        }
-
         await _todoItemService.Update(command);
 
 
@@ -57,7 +47,7 @@ public class TodoItemsController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _todoItemService.Delete(new DeleteTodoItemCommand { Id = id });
+        await _todoItemService.Delete(id);
 
         return NoContent();
     }

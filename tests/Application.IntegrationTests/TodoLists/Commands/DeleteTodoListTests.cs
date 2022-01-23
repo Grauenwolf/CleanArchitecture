@@ -26,8 +26,8 @@ public class DeleteTodoListTests : TestBase
             scope.ServiceProvider.GetRequiredService<ICsvFileBuilder>()
             );
 
-        var command = new DeleteTodoListCommand { Id = 99 };
-        await FluentActions.Invoking(() => service.Delete(command)).Should().ThrowAsync<NotFoundException>();
+        var id = 99;
+        await FluentActions.Invoking(() => service.Delete(id)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -48,10 +48,7 @@ public class DeleteTodoListTests : TestBase
             Title = "New List"
         });
 
-        await service.Delete(new DeleteTodoListCommand
-        {
-            Id = listId
-        });
+        await service.Delete(listId);
 
         var list = await FindAsync<TodoList>(listId);
 

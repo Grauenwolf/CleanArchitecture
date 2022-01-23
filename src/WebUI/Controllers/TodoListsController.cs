@@ -35,14 +35,9 @@ public class TodoListsController : ApiControllerBase
         return await _todoListService.Create(command);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> Update(int id, UpdateTodoListCommand command)
+    [HttpPut()]
+    public async Task<ActionResult> Update(UpdateTodoListCommand command)
     {
-        if (id != command.Id)
-        {
-            return BadRequest();
-        }
-
         await _todoListService.Update(command);
 
         return NoContent();
@@ -51,7 +46,7 @@ public class TodoListsController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _todoListService.Delete(new DeleteTodoListCommand { Id = id });
+        await _todoListService.Delete(id);
 
         return NoContent();
     }

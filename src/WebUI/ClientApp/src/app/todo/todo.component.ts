@@ -95,7 +95,7 @@ export class TodoComponent {
     }
 
     updateListOptions() {
-        this.listsClient.update(this.selectedList.id, UpdateTodoListCommand.fromJS(this.listOptionsEditor))
+        this.listsClient.update(UpdateTodoListCommand.fromJS(this.listOptionsEditor))
             .subscribe(
                 () => {
                     this.selectedList.title = this.listOptionsEditor.title,
@@ -134,7 +134,7 @@ export class TodoComponent {
     }
 
     updateItemDetails(): void {
-        this.itemsClient.updateItemDetails(this.selectedItem.id, UpdateTodoItemDetailCommand.fromJS(this.itemDetailsEditor))
+        this.itemsClient.updateItemDetails(UpdateTodoItemDetailCommand.fromJS(this.itemDetailsEditor))
             .subscribe(
                 () => {
                     if (this.selectedItem.listId != this.itemDetailsEditor.listId) {
@@ -189,7 +189,7 @@ export class TodoComponent {
                     error => console.error(error)
                 );
         } else {
-            this.itemsClient.update(item.id, UpdateTodoItemCommand.fromJS(item))
+            this.itemsClient.update(UpdateTodoItemCommand.fromJS(item))
                 .subscribe(
                     () => console.log('Update succeeded.'),
                     error => console.error(error)

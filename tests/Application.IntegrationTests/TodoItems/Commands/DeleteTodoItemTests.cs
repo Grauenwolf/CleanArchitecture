@@ -26,10 +26,10 @@ public class DeleteTodoItemTests : TestBase
             scope.ServiceProvider.GetRequiredService<IMapper>()
             );
 
-        var command = new DeleteTodoItemCommand { Id = 99 };
+        var id = 99;
 
         await FluentActions.Invoking(() =>
-            service.Delete(command)).Should().ThrowAsync<NotFoundException>();
+            service.Delete(id)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -59,10 +59,7 @@ public class DeleteTodoItemTests : TestBase
             Title = "New Item"
         });
 
-        await service2.Delete(new DeleteTodoItemCommand
-        {
-            Id = itemId
-        });
+        await service2.Delete(itemId);
 
         var item = await FindAsync<TodoItem>(itemId);
 

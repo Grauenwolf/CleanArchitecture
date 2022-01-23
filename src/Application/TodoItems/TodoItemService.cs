@@ -29,14 +29,13 @@ public class TodoItemService
             .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
     }
 
-    public async Task<Unit> Delete(DeleteTodoItemCommand request)
+    public async Task<Unit> Delete(int id)
     {
-        var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id });
+        var entity = await _context.TodoItems.FindAsync(id);
 
         if (entity == null)
         {
-            throw new NotFoundException(nameof(TodoItem), request.Id);
+            throw new NotFoundException(nameof(TodoItem), id);
         }
 
         _context.TodoItems.Remove(entity);
@@ -64,8 +63,7 @@ public class TodoItemService
 
     public async Task<Unit> Update(UpdateTodoItemCommand request)
     {
-        var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id });
+        var entity = await _context.TodoItems.FindAsync(request.Id);
 
         if (entity == null)
         {
@@ -82,8 +80,7 @@ public class TodoItemService
 
     public async Task<Unit> Update(UpdateTodoItemDetailCommand request)
     {
-        var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id });
+        var entity = await _context.TodoItems.FindAsync(request.Id);
 
         if (entity == null)
         {
