@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using AutoMapper;
 using CleanArchitecture.Application.Common.Mappings;
-using CleanArchitecture.Application.TodoLists.Queries.GetTodos;
+using CleanArchitecture.Application.TodoLists;
 using CleanArchitecture.Domain.Entities;
 using NUnit.Framework;
 

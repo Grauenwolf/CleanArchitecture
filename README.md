@@ -2,6 +2,8 @@
 
 The purpose of this repository is to investigate "Clean Architecture" and see if it can be improved upon. The goal is to remove complexity without reducing functionality.
 
+To order to see the transformation incrementally, a branch has been created for each step. Simply compare the branch with the one before it to see the progression.
+
 ## Round 0 - Base State Validation
 
 To being with we need to see if the application can be compiled and run. Likewise, we need to verify that all of the automated tests run.
@@ -75,6 +77,24 @@ All of the failing integration tests deal with validation. Which reveals some co
 4. Most of the tests don't check if the correct validation error is returned, only whether or not a validation error happened.
 
 Fixing all of these issues is a bit much for one round. So we're just going to do the minimum needed for getting the tests running. Which means ripping out MediatR and using the validators directly.
+
+
+## Round 8 - Reducing the Namespaces
+
+Having only one or two classes per namespace is a sign of poor organization. It makes it harder to follow the list of `using` directives unnecessarily long. For example, consider this list from the `TodoItemsController` class.
+
+```
+using CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem;
+using CleanArchitecture.Application.TodoItems.Commands.DeleteTodoItem;
+using CleanArchitecture.Application.TodoItems.Commands.UpdateTodoItem;
+using CleanArchitecture.Application.TodoItems.Commands.UpdateTodoItemDetail;
+using CleanArchitecture.Application.TodoItems.Queries.GetTodoItemsWithPagination;
+
+```
+
+Those five namespaces could be rolled into one to reduce verbosity and make it easier to look at multiple, related classes at once.
+
+At the same time, we'll break up the files so that each has only one class. There is no reason to put multiple classes in one file and it makes them harder to find in the solution explorer.
 
 
 

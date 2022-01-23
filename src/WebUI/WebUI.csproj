@@ -42,8 +42,21 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
+        <Content Remove="ClientApp\obj\**" />
         <None Remove="$(SpaRoot)**" />
+        <None Remove="ClientApp\obj\**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="ClientApp\obj\**" />
+      <EmbeddedResource Remove="ClientApp\obj\**" />
+      <TypeScriptCompile Remove="ClientApp\node_modules\**" />
+      <TypeScriptCompile Remove="ClientApp\obj\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ClientApp\obj\Docker\CanonicalServiceNames.cache" />
     </ItemGroup>
 
     <ItemGroup>
