@@ -5,7 +5,6 @@ using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.Common.Mappings;
 using CleanArchitecture.Application.Common.Models;
 using CleanArchitecture.Domain.Entities;
-using CleanArchitecture.Domain.Events;
 using MediatR;
 
 namespace CleanArchitecture.Application.TodoItems;
@@ -42,8 +41,6 @@ public class TodoItemService
 
         _context.TodoItems.Remove(entity);
 
-        entity.DomainEvents.Add(new TodoItemDeletedEvent(entity));
-
         await _context.SaveChangesAsync();
 
         return Unit.Value;
@@ -57,8 +54,6 @@ public class TodoItemService
             Title = request.Title,
             Done = false
         };
-
-        entity.DomainEvents.Add(new TodoItemCreatedEvent(entity));
 
         _context.TodoItems.Add(entity);
 

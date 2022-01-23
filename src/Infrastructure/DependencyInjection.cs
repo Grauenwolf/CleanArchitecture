@@ -30,8 +30,6 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
-        services.AddScoped<IDomainEventService, DomainEventService>();
-
         services
             .AddDefaultIdentity<ApplicationUser>()
             .AddRoles<IdentityRole>()
@@ -47,7 +45,7 @@ public static class DependencyInjection
         services.AddAuthentication()
             .AddIdentityServerJwt();
 
-        services.AddAuthorization(options => 
+        services.AddAuthorization(options =>
             options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator")));
 
         return services;

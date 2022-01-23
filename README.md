@@ -123,6 +123,27 @@ The TodoItemCompletedEventHandler and TodoItemCreatedEventHandler classes don’
 
 While it is possible that an internal service bus is needed for a project, in this case it is not. And even if a need arises in the future, the information needed in the events may be very different than what’s available today. Which means the current messages will have to be rewritten anyways or the new feature that needs them will have to accept a compromise. This is a risk of trying to predict future needs without a clear roadmap. 
 
+Round 13 - Remove the Layer Violation
+
+The persistence layer, specifically the EF Core DB context, has a dependency on the business logic layer and MediatR. This is used to signal status events such as the creation or completion of a `ToDoItem`. Aside from the fact that nothing listens for these events, that kind of logic shouldn’t be hidden inside the persistence layer. Like database triggers, there is no way to know that these exist in the `DbContext` unless you already know to go searching for them. 
+
+If needed, the service classes could trigger the events. Though more often than not, the service class should just perform the work itself rather than deferring to something external.  
+
+Then there is the timing concern. The `IDomainEventService`, which handles the publishing, may operate  within the context of a database transaction. Or it may not. By the time you get to the `IDomainEventService` implementation, that information is lost in the call stack. Currently the `DomainEventService` class handles it well because it doesn’t have database access, but there is no telling what future implementations of `IDomainEventService` will need.
+
+The counter-point to this argument is that there should never be a future implementation of `IDomainEventService`. All logic should be in MediatR event listeners, meaning that the `DomainEventService` won’t need to be changed in the future. Though of course that brings into question why `IDomainEventService` exists in the first place.
+
+Further compounding the issue is `DomainEvents` collection. This is placed on entities to act as a scratch space to store events before they are published. But from the user of the entity, they look like just another child table. Though if you look at the database, no such table exists. This can lead to both unnecessary confusion and the opportunity to misuse the collection.
+
+Only some of the entities offer the `DomainEvents` collection. This inconsistency will lead to further confusion, as developers wonder what the rule is for whether or not a given entity can trigger events. 
+
+There is also the fact that the `DomainEvents` collection is exposed as a property. This means it needs to be explicitly excluded on each entity so EF Core doesn’t go searching for a matching table. Had it been exposed as a property, then this wouldn’t be an issue.
+
+Now you may be thinking, “well at least I get notifications for inserts and deletes for free”. And that’s a reasonable assumption, as the `DbContext` has all of the information necessary to make that happen. But no, that’s not how it works. The service classes (formally the handlers) need to explicitly add events to the `DomainEvents` collection in order to indicate that a create, update, or delete has occurred.
+
+All in all, this was a poorly conceived feature with an equally bad implementation and it needs to be removed before anything important takes a dependency on it.
+
+
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
