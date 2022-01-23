@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-using CleanArchitecture.Application.Common.Interfaces;
-using CleanArchitecture.Domain.Common;
-using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Infrastructure.Identity;
+using CleanArchitecture.Infrastructure.Persistence.Entities;
+using CleanArchitecture.Infrastructure.Services;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;

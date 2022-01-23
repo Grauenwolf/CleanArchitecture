@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Application.WeatherForecasts;
+﻿using CleanArchitecture.Infrastructure.WeatherForecasts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitecture.WebUI.Controllers;

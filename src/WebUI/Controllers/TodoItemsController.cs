@@ -1,5 +1,5 @@
-﻿using CleanArchitecture.Application.Common.Models;
-using CleanArchitecture.Application.TodoItems;
+﻿using CleanArchitecture.Infrastructure.Mappings;
+using CleanArchitecture.Infrastructure.TodoItems;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

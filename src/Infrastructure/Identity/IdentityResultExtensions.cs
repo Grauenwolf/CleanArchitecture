@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Application.Common.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace CleanArchitecture.Infrastructure.Identity;
 

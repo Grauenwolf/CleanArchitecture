@@ -1,6 +1,5 @@
-using CleanArchitecture.Application;
-using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Infrastructure;
+using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
 using CleanArchitecture.WebUI.Filters;
 using CleanArchitecture.WebUI.Middleware;

@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
+﻿using CleanArchitecture.Infrastructure.Identity;
+using System.Security.Claims;
 
-using CleanArchitecture.Application.Common.Interfaces;
 
 namespace CleanArchitecture.WebUI.Services;
 

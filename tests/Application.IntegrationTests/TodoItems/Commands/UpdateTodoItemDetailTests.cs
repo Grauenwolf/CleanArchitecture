@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using CleanArchitecture.Application.Common.Exceptions;
-using CleanArchitecture.Application.Common.Interfaces;
-using CleanArchitecture.Application.TodoItems;
-using CleanArchitecture.Application.TodoLists;
-using CleanArchitecture.Domain.Entities;
-using CleanArchitecture.Domain.Enums;
+using CleanArchitecture.Infrastructure.Enums;
+using CleanArchitecture.Infrastructure.Exceptions;
+using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Persistence;
+using CleanArchitecture.Infrastructure.Persistence.Entities;
+using CleanArchitecture.Infrastructure.TodoItems;
+using CleanArchitecture.Infrastructure.TodoLists;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;

@@ -1,8 +1,8 @@
 ﻿using System.Runtime.Serialization;
 using AutoMapper;
-using CleanArchitecture.Application.Common.Mappings;
-using CleanArchitecture.Application.TodoLists;
-using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Infrastructure.Mappings;
+using CleanArchitecture.Infrastructure.Persistence.Entities;
+using CleanArchitecture.Infrastructure.TodoLists;
 using NUnit.Framework;
 
 namespace CleanArchitecture.Application.UnitTests.Common.Mappings;

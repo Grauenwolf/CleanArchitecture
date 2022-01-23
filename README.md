@@ -162,6 +162,91 @@ Next up is a sweep for unused classes. When performing this sweep, watch for cla
 
 We will also remove interfaces that are never consumed. 
 
+## Round 17 - Fixing the Project Structure
+
+Quick question, where should you look to find the models for the project? Is it `Application` or `Domain`? 
+
+The answer is "both". The places where you can find the basic data-holding classes for the project include...
+
+* `CleanArchitecture.Application.TodoItems`
+* `CleanArchitecture.Application.TodoLists`
+* `CleanArchitecture.Application.WeatherForecasts`
+* `CleanArchitecture.Domain.Entities`
+* `CleanArchitecture.Domain.Enums`
+* `CleanArchitecture.Domain.ValueObjects`
+
+
+Six different namespaces across two projects. That's bad enough on its own, but the two projects have a different structure. The `Application` project arranges them by database table, the `Domain` project by the kind of class.
+
+Question two, where would you make the change if you wanted to add another table to EF Core? By this I mean create an entity model, register it in the `DbContext`, and then add any ancillary code. 
+
+* `CleanArchitecture.Domain.Entities`
+* `CleanArchitecture.Application.Common.Interfaces`
+* `CleanArchitecture.Infrastructure.Persistence` 
+
+If one change requires modifying three separate projects, that's a problem. And note that we're not talking about a whole feature. Creating the new entity is just the first step. 
+
+Question three, where I do go to update the EF Core version?
+
+Now you would think it would be in the `Infrastructure` project, because the documentation says that's where persistence lives. But actually, you need to change both `Application` and `Infrastructure`. Why is the ORM library in `Application` if `Application` is only supposed to have interfaces and no implementation details?
+
+Question four, where would I add a new exception class?
+
+Well that could be either of these two locations.
+
+* `CleanArchitecture.Application.Common.Exceptions`
+* `CleanArchitecture.Domain.Exceptions`
+
+And no, there are no hints as to which should be favored.
+
+### Planning the correction
+
+This project structure has to go. We can't have developers spending half their time searching for where stuff goes. This is quite an undertaking, so we are going to perform the following steps.
+
+1. Move everything into one project. Since the `Infrastructure` project is the highest on the dependency tree, we'll use that.
+2. Merge the two `DependencyInjection` classes.
+2. Entities will be moved into the `Persistence` folder so all of the EF Core pieces are together.
+3. Interfaces will be moved to the same folder as their implementations. That way you can easily change one when you need to change the other.
+4. The `CleanArchitecture.Domain.Common` folder will be broken up. The `ValueObject` base class will be moved into the `ValueObjects` folder. Likewise, the `AuditableEntity` base class will be moved to the `Entities` folder. 
+5. The `Exceptions` folders will be merged.
+6. The `Result` class is only used by Identity features, so it will be moved to the `Identity` folder.
+7. The `PaginatedList` class is only created by the mapping extensions, so it will be moved to `Mappings`.
+8. The `PriorityLevel` class is closely related to the `TodoItem` entity, so it will be moved into the `Entities` folder.
+9. There is only one class in `CleanArchitecture.Infrastructure.Files.Maps`, so it will be rolled up into `CleanArchitecture.Infrastructure.Files`.
+10. The configuation files for the entities will be moved to the same folder as the entities they apply to.
+
+
+### Evaluating the Changes
+
+It's one thing to move everything around, it's another to move them into better locations. So we need to check our new structure against the original questions.
+
+```
++---Exceptions
++---Files
++---Identity
++---Mappings
++---Persistence
+|   +---Entities
+|   \---Migrations
++---Services
++---TodoItems
++---TodoLists
++---ValueObjects
+\---WeatherForecasts
+```
+
+* Where should you look to find the models for the project? The table-specific folder (e.g. `TodoItems`) for DTOs and `Persistence\Entities` for database entities.
+* Where would you make the change if you wanted to add another table to EF Core? In the `Persistence` folder and its `Entities` subfolder. 
+* Where I do go to update the EF Core version? The `Infrastructure` project.
+* Where would I add a new exception class? The `Exceptions` folder.
+
+There is one outlier, the `ValueObjects` folder. That has some interesting things going one, so it's going to get a separate dedicated round.
+
+
+
+
+*****
+
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
  

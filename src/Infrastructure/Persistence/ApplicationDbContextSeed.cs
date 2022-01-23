@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Domain.Entities;
-using CleanArchitecture.Domain.ValueObjects;
-using CleanArchitecture.Infrastructure.Identity;
+﻿using CleanArchitecture.Infrastructure.Identity;
+using CleanArchitecture.Infrastructure.Persistence.Entities;
+using CleanArchitecture.Infrastructure.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 namespace CleanArchitecture.Infrastructure.Persistence;

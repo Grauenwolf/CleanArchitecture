@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using CleanArchitecture.Application.Common.Interfaces;
-using CleanArchitecture.Application.TodoLists;
-using CleanArchitecture.Domain.Entities;
-using CleanArchitecture.Domain.ValueObjects;
+using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Persistence;
+using CleanArchitecture.Infrastructure.Persistence.Entities;
+using CleanArchitecture.Infrastructure.TodoLists;
+using CleanArchitecture.Infrastructure.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
