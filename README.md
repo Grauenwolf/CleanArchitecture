@@ -144,7 +144,7 @@ Now you may be thinking, “well at least I get notifications for inserts and de
 All in all, this was a poorly conceived feature with an equally bad implementation and it needs to be removed before anything important takes a dependency on it.
 
 
-Round 14 - Realign Controller and Service Parameters
+## Round 14 - Realign Controller and Service Parameters
 
 There are a couple small classes that no longer a purpose. Originally they were used as messages for MediatR, but since that is no longer being used we can pass the parameters directly from the controller classes to the service classes.
 
