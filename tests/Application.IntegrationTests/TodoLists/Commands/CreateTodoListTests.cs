@@ -42,7 +42,7 @@ public class CreateTodoListTests : TestBase
         await service.Create(new CreateTodoListCommand
         {
             Title = "Shopping"
-        }, CancellationToken.None);
+        });
 
 
         //Test
@@ -76,7 +76,7 @@ public class CreateTodoListTests : TestBase
             Title = "Tasks"
         };
 
-        var id = await service.Create(command, CancellationToken.None);
+        var id = await service.Create(command);
 
         var list = await FindAsync<TodoList>(id);
 

@@ -45,7 +45,7 @@ public class CreateTodoItemTests : TestBase
         var listId = await service1.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         var command = new CreateTodoItemCommand
         {
@@ -53,7 +53,7 @@ public class CreateTodoItemTests : TestBase
             Title = "Tasks"
         };
 
-        var itemId = await service2.Create(command, CancellationToken.None);
+        var itemId = await service2.Create(command);
 
         var item = await FindAsync<TodoItem>(itemId);
 

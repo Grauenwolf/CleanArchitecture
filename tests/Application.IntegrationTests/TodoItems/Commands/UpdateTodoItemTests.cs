@@ -27,7 +27,7 @@ public class UpdateTodoItemTests : TestBase
             );
 
         var command = new UpdateTodoItemCommand { Id = 99, Title = "New Title" };
-        await FluentActions.Invoking(() => service.Update(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
+        await FluentActions.Invoking(() => service.Update(command)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -50,13 +50,13 @@ public class UpdateTodoItemTests : TestBase
         var listId = await service1.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         var itemId = await service2.Create(new CreateTodoItemCommand
         {
             ListId = listId,
             Title = "New Item"
-        }, CancellationToken.None);
+        });
 
         var command = new UpdateTodoItemCommand
         {
@@ -64,7 +64,7 @@ public class UpdateTodoItemTests : TestBase
             Title = "Updated Item Title"
         };
 
-        await service2.Update(command, CancellationToken.None);
+        await service2.Update(command);
 
         var item = await FindAsync<TodoItem>(itemId);
 

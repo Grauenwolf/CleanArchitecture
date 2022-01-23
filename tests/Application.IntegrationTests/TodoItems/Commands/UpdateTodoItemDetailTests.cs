@@ -33,7 +33,7 @@ public class UpdateTodoItemDetailTests : TestBase
             );
 
         var command = new UpdateTodoItemCommand { Id = 99, Title = "New Title" };
-        await FluentActions.Invoking(() => service2.Update(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
+        await FluentActions.Invoking(() => service2.Update(command)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -56,13 +56,13 @@ public class UpdateTodoItemDetailTests : TestBase
         var listId = await service1.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         var itemId = await service2.Create(new CreateTodoItemCommand
         {
             ListId = listId,
             Title = "New Item"
-        }, CancellationToken.None);
+        });
 
         var command = new UpdateTodoItemDetailCommand
         {
@@ -72,7 +72,7 @@ public class UpdateTodoItemDetailTests : TestBase
             Priority = PriorityLevel.High
         };
 
-        await service2.Update(command, CancellationToken.None);
+        await service2.Update(command);
 
         var item = await FindAsync<TodoItem>(itemId);
 

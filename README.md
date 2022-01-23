@@ -109,6 +109,16 @@ The only reason for having one method per handler class was to satisfy the Media
 The method names will have to be changed so that they are unique within a class. But when reading stack traces, it is better to have methods named `Create` or `Update` than having everything generically called “Handle’.
 
 
+## Round 11 - Wiring up the Cancellation Tokens
+
+Though the handlers (now renamed services) had support for cancellation tokens, they were not provided by the controller layer to the MediatR layer. This means that when a client cancels a request, the web server never finds out about it.
+
+Fixing this is fairly easy. Simply add a `CancellationToken` parameter to each controller method that should be cancellable. 
+
+Generally speaking, only read methods should allow cancellation. Write operations can run into some difficult timing issues if canceled, and should be fast enough that cancellation is never necessary. So for the write method, the cancellation token will be removed from the service class.
+
+
+
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
  
  # Clean Architecture Solution Template

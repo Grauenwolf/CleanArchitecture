@@ -32,7 +32,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
 
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
         {
@@ -77,5 +77,10 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
             @event.IsPublished = true;
             await _domainEventService.Publish(@event);
         }
+    }
+
+    Task<int> IApplicationDbContext.SaveChangesAsync()
+    {
+        return SaveChangesAsync();
     }
 }

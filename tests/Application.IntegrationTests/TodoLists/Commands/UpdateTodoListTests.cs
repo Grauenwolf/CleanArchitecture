@@ -26,7 +26,7 @@ public class UpdateTodoListTests : TestBase
             );
 
         var command = new UpdateTodoListCommand { Id = 99, Title = "New Title" };
-        await FluentActions.Invoking(() => service.Update(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
+        await FluentActions.Invoking(() => service.Update(command)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -47,12 +47,12 @@ public class UpdateTodoListTests : TestBase
         var listId = await service.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         await service.Create(new CreateTodoListCommand
         {
             Title = "Other List"
-        }, CancellationToken.None);
+        });
 
 
         //Test
@@ -85,7 +85,7 @@ public class UpdateTodoListTests : TestBase
         var listId = await service.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         var command = new UpdateTodoListCommand
         {
@@ -93,7 +93,7 @@ public class UpdateTodoListTests : TestBase
             Title = "Updated List Title"
         };
 
-        await service.Update(command, CancellationToken.None);
+        await service.Update(command);
 
         var list = await FindAsync<TodoList>(listId);
 

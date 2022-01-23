@@ -27,13 +27,13 @@ public class TodoItemService
             .Where(x => x.ListId == request.ListId)
             .OrderBy(x => x.Title)
             .ProjectTo<TodoItemBriefDto>(_mapper.ConfigurationProvider)
-            .PaginatedListAsync(request.PageNumber, request.PageSize);
+            .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
     }
 
-    public async Task<Unit> Delete(DeleteTodoItemCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Delete(DeleteTodoItemCommand request)
     {
         var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+            .FindAsync(new object[] { request.Id });
 
         if (entity == null)
         {
@@ -44,12 +44,12 @@ public class TodoItemService
 
         entity.DomainEvents.Add(new TodoItemDeletedEvent(entity));
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return Unit.Value;
     }
 
-    public async Task<int> Create(CreateTodoItemCommand request, CancellationToken cancellationToken)
+    public async Task<int> Create(CreateTodoItemCommand request)
     {
         var entity = new TodoItem
         {
@@ -62,15 +62,15 @@ public class TodoItemService
 
         _context.TodoItems.Add(entity);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return entity.Id;
     }
 
-    public async Task<Unit> Update(UpdateTodoItemCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Update(UpdateTodoItemCommand request)
     {
         var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+            .FindAsync(new object[] { request.Id });
 
         if (entity == null)
         {
@@ -80,15 +80,15 @@ public class TodoItemService
         entity.Title = request.Title;
         entity.Done = request.Done;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return Unit.Value;
     }
 
-    public async Task<Unit> Update(UpdateTodoItemDetailCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Update(UpdateTodoItemDetailCommand request)
     {
         var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+            .FindAsync(new object[] { request.Id });
 
         if (entity == null)
         {
@@ -99,7 +99,7 @@ public class TodoItemService
         entity.Priority = request.Priority;
         entity.Note = request.Note;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return Unit.Value;
     }

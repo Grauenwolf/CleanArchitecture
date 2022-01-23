@@ -22,10 +22,10 @@ public class TodoListService
         _fileBuilder = fileBuilder;
     }
 
-    public async Task<Unit> Update(UpdateTodoListCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Update(UpdateTodoListCommand request)
     {
         var entity = await _context.TodoLists
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+            .FindAsync(new object[] { request.Id });
 
         if (entity == null)
         {
@@ -34,7 +34,7 @@ public class TodoListService
 
         entity.Title = request.Title;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return Unit.Value;
     }
@@ -71,7 +71,7 @@ public class TodoListService
         return vm;
     }
 
-    public async Task<int> Create(CreateTodoListCommand request, CancellationToken cancellationToken)
+    public async Task<int> Create(CreateTodoListCommand request)
     {
         var entity = new TodoList();
 
@@ -79,16 +79,16 @@ public class TodoListService
 
         _context.TodoLists.Add(entity);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return entity.Id;
     }
 
-    public async Task<Unit> Delete(DeleteTodoListCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Delete(DeleteTodoListCommand request)
     {
         var entity = await _context.TodoLists
             .Where(l => l.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
+            .SingleOrDefaultAsync();
 
         if (entity == null)
         {
@@ -97,7 +97,7 @@ public class TodoListService
 
         _context.TodoLists.Remove(entity);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
 
         return Unit.Value;
     }

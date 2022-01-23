@@ -16,15 +16,15 @@ public class TodoListsController : ApiControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<TodosVm>> Get()
+    public async Task<ActionResult<TodosVm>> Get(CancellationToken cancellationToken)
     {
-        return await _todoListService.Get(new GetTodosQuery(), CancellationToken.None);
+        return await _todoListService.Get(new GetTodosQuery(), cancellationToken);
     }
 
     [HttpGet("{id}")]
-    public async Task<FileResult> Get(int id)
+    public async Task<FileResult> Get(int id, CancellationToken cancellationToken)
     {
-        var vm = await _todoListService.Export(new ExportTodosQuery { ListId = id }, CancellationToken.None);
+        var vm = await _todoListService.Export(new ExportTodosQuery { ListId = id }, cancellationToken);
 
         return File(vm.Content, vm.ContentType, vm.FileName);
     }
@@ -32,7 +32,7 @@ public class TodoListsController : ApiControllerBase
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateTodoListCommand command)
     {
-        return await _todoListService.Create(command, CancellationToken.None);
+        return await _todoListService.Create(command);
     }
 
     [HttpPut("{id}")]
@@ -43,7 +43,7 @@ public class TodoListsController : ApiControllerBase
             return BadRequest();
         }
 
-        await _todoListService.Update(command, CancellationToken.None);
+        await _todoListService.Update(command);
 
         return NoContent();
     }
@@ -51,7 +51,7 @@ public class TodoListsController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _todoListService.Delete(new DeleteTodoListCommand { Id = id }, CancellationToken.None);
+        await _todoListService.Delete(new DeleteTodoListCommand { Id = id });
 
         return NoContent();
     }

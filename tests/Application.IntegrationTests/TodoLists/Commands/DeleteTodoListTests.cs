@@ -27,7 +27,7 @@ public class DeleteTodoListTests : TestBase
             );
 
         var command = new DeleteTodoListCommand { Id = 99 };
-        await FluentActions.Invoking(() => service.Delete(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
+        await FluentActions.Invoking(() => service.Delete(command)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -46,12 +46,12 @@ public class DeleteTodoListTests : TestBase
         var listId = await service.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         await service.Delete(new DeleteTodoListCommand
         {
             Id = listId
-        }, CancellationToken.None);
+        });
 
         var list = await FindAsync<TodoList>(listId);
 

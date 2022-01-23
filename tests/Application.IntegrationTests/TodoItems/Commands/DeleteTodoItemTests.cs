@@ -29,7 +29,7 @@ public class DeleteTodoItemTests : TestBase
         var command = new DeleteTodoItemCommand { Id = 99 };
 
         await FluentActions.Invoking(() =>
-            service.Delete(command, CancellationToken.None)).Should().ThrowAsync<NotFoundException>();
+            service.Delete(command)).Should().ThrowAsync<NotFoundException>();
     }
 
     [Test]
@@ -51,18 +51,18 @@ public class DeleteTodoItemTests : TestBase
         var listId = await service1.Create(new CreateTodoListCommand
         {
             Title = "New List"
-        }, CancellationToken.None);
+        });
 
         var itemId = await service2.Create(new CreateTodoItemCommand
         {
             ListId = listId,
             Title = "New Item"
-        }, CancellationToken.None);
+        });
 
         await service2.Delete(new DeleteTodoItemCommand
         {
             Id = itemId
-        }, CancellationToken.None);
+        });
 
         var item = await FindAsync<TodoItem>(itemId);
 
