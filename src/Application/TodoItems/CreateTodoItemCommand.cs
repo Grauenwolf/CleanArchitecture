@@ -1,8 +1,7 @@
-﻿using MediatR;
-
+﻿
 namespace CleanArchitecture.Application.TodoItems;
 
-public class CreateTodoItemCommand : IRequest<int>
+public class CreateTodoItemCommand
 {
     public int ListId { get; set; }
 

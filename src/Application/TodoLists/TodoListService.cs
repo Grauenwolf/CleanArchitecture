@@ -4,7 +4,6 @@ using CleanArchitecture.Application.Common.Exceptions;
 using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Domain.Enums;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitecture.Application.TodoLists;
@@ -22,7 +21,7 @@ public class TodoListService
         _fileBuilder = fileBuilder;
     }
 
-    public async Task<Unit> Update(UpdateTodoListCommand request)
+    public async Task Update(UpdateTodoListCommand request)
     {
         var entity = await _context.TodoLists.FindAsync(request.Id);
 
@@ -35,7 +34,7 @@ public class TodoListService
 
         await _context.SaveChangesAsync();
 
-        return Unit.Value;
+        return;
     }
 
     public async Task<TodosVm> Get(CancellationToken cancellationToken)
@@ -83,7 +82,7 @@ public class TodoListService
         return entity.Id;
     }
 
-    public async Task<Unit> Delete(int id)
+    public async Task Delete(int id)
     {
         var entity = await _context.TodoLists
             .Where(l => l.Id == id)
@@ -98,6 +97,6 @@ public class TodoListService
 
         await _context.SaveChangesAsync();
 
-        return Unit.Value;
+        return;
     }
 }

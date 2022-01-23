@@ -5,7 +5,6 @@ using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.Common.Mappings;
 using CleanArchitecture.Application.Common.Models;
 using CleanArchitecture.Domain.Entities;
-using MediatR;
 
 namespace CleanArchitecture.Application.TodoItems;
 
@@ -29,7 +28,7 @@ public class TodoItemService
             .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
     }
 
-    public async Task<Unit> Delete(int id)
+    public async Task Delete(int id)
     {
         var entity = await _context.TodoItems.FindAsync(id);
 
@@ -42,7 +41,7 @@ public class TodoItemService
 
         await _context.SaveChangesAsync();
 
-        return Unit.Value;
+        return;
     }
 
     public async Task<int> Create(CreateTodoItemCommand request)
@@ -61,7 +60,7 @@ public class TodoItemService
         return entity.Id;
     }
 
-    public async Task<Unit> Update(UpdateTodoItemCommand request)
+    public async Task Update(UpdateTodoItemCommand request)
     {
         var entity = await _context.TodoItems.FindAsync(request.Id);
 
@@ -75,10 +74,10 @@ public class TodoItemService
 
         await _context.SaveChangesAsync();
 
-        return Unit.Value;
+        return;
     }
 
-    public async Task<Unit> Update(UpdateTodoItemDetailCommand request)
+    public async Task Update(UpdateTodoItemDetailCommand request)
     {
         var entity = await _context.TodoItems.FindAsync(request.Id);
 
@@ -93,6 +92,6 @@ public class TodoItemService
 
         await _context.SaveChangesAsync();
 
-        return Unit.Value;
+        return;
     }
 }

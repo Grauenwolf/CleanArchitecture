@@ -2,7 +2,6 @@
 using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
 using CleanArchitecture.WebUI;
-using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -78,15 +77,6 @@ public class Testing
     }
 
     internal static IServiceScopeFactory ScopeFactory => _scopeFactory;
-
-    public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
-    {
-        using var scope = _scopeFactory.CreateScope();
-
-        var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
-
-        return await mediator.Send(request);
-    }
 
     public static async Task<string> RunAsDefaultUserAsync()
     {

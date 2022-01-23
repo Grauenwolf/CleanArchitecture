@@ -1,8 +1,7 @@
-﻿using MediatR;
-
+﻿
 namespace CleanArchitecture.Application.TodoLists;
 
-public class ExportTodosQuery : IRequest<ExportTodosVm>
+public class ExportTodosQuery
 {
     public int ListId { get; set; }
 }

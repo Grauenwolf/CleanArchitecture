@@ -1,9 +1,8 @@
 ﻿using CleanArchitecture.Domain.Enums;
-using MediatR;
 
 namespace CleanArchitecture.Application.TodoItems;
 
-public class UpdateTodoItemDetailCommand : IRequest
+public class UpdateTodoItemDetailCommand
 {
     public int Id { get; set; }
 

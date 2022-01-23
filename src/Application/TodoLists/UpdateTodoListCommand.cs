@@ -1,8 +1,7 @@
-﻿using MediatR;
-
+﻿
 namespace CleanArchitecture.Application.TodoLists;
 
-public class UpdateTodoListCommand : IRequest
+public class UpdateTodoListCommand
 {
     public int Id { get; set; }
 

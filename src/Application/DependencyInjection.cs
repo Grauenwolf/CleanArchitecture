@@ -3,7 +3,6 @@ using CleanArchitecture.Application.TodoItems;
 using CleanArchitecture.Application.TodoLists;
 using CleanArchitecture.Application.WeatherForecasts;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CleanArchitecture.Application;
@@ -14,7 +13,6 @@ public static class DependencyInjection
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddMediatR(Assembly.GetExecutingAssembly());
 
         services.AddSingleton<WeatherForecastService>();
 
