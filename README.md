@@ -156,6 +156,11 @@ Removing the `id` parameter will cause a breaking change and the typescript code
 
 At this point the last remnants of MediatR can be removed.  
 
+## Round 16 - Remove Unused Classes
+
+Next up is a sweep for unused classes. When performing this sweep, watch for classes that are never instantiated. It can be hard to distinguish between classes that are actually not used and ones that are created via reflection. 
+
+We will also remove interfaces that are never consumed. 
 
 
  <img align="left" width="116" height="116" src="https://raw.githubusercontent.com/jasontaylordev/CleanArchitecture/main/.github/icon.png" />
