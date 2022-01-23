@@ -117,7 +117,7 @@ Fixing this is fairly easy. Simply add a `CancellationToken` parameter to each c
 
 Generally speaking, only read methods should allow cancellation. Write operations can run into some difficult timing issues if canceled, and should be fast enough that cancellation is never necessary. So for the write method, the cancellation token will be removed from the service class.
 
-Round 12 - Remove the Unnecessary Event Handlers
+## Round 12 - Remove the Unnecessary Event Handlers
 
 The TodoItemCompletedEventHandler and TodoItemCreatedEventHandler classes don’t actually do anything. The log message they create serves no purpose, and if it was useful, it could have been handled by the service class. 
 
