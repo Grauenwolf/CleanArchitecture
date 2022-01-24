@@ -3,7 +3,6 @@ using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Persistence;
 using CleanArchitecture.Infrastructure.Persistence.Entities;
 using CleanArchitecture.Infrastructure.TodoLists;
-using CleanArchitecture.Infrastructure.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -44,7 +43,6 @@ public class GetTodosTests : TestBase
         await AddAsync(new TodoList
         {
             Title = "Shopping",
-            Colour = Colour.Blue,
             Items =
                     {
                         new TodoItem { Title = "Apples", Done = true },

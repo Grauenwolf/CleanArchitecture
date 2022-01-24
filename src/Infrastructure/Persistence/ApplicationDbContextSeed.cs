@@ -1,6 +1,5 @@
 ﻿using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence.Entities;
-using CleanArchitecture.Infrastructure.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 namespace CleanArchitecture.Infrastructure.Persistence;
@@ -33,7 +32,6 @@ public static class ApplicationDbContextSeed
             context.TodoLists.Add(new TodoList
             {
                 Title = "Shopping",
-                Colour = Colour.Blue,
                 Items =
                     {
                         new TodoItem { Title = "Apples", Done = true },

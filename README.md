@@ -242,7 +242,95 @@ It's one thing to move everything around, it's another to move them into better 
 
 There is one outlier, the `ValueObjects` folder. That has some interesting things going one, so it's going to get a separate dedicated round.
 
+## Round 18 - Problems with Colour
 
+To put it bluntly, `Colour` and its base class are hot mess. We'll start with `ValueObject`.
+
+Consider these signatures.
+
+    protected static bool EqualOperator(ValueObject left, ValueObject right)
+    protected static bool NotEqualOperator(ValueObject left, ValueObject right)
+
+What are these? If you aren't paying close attention, they appear as though they are overriding the `==` and `!=` operator. But that's not the case. And if you look at the Microsoft article where they got this class, you can see it isn't used anywhere in the official example either. Basically, it just exists to confuse the reader. So they have to be deleted.
+
+Next let’s look at `Equals`. 
+
+
+    protected abstract IEnumerable<object> GetEqualityComponents();
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || obj.GetType() != GetType())
+        {
+            return false;
+        }
+
+        var other = (ValueObject)obj;
+        return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
+    }
+
+This needs to allocate an `IEnumerable<object>` and a `IEnumerator<object>` every time you perform an equality check? And if any of the properties on the subclass are value types, those will trigger further allocations due to boxing. 
+
+This is just madness. While it would be nice to have a generic base class that handles equality checks, this isn't the way to do it. Equality operations need to be fast and allocation-free because they are often called inside a tight loop.
+
+The `GetHashCode` operator needs to go for the same reason.
+
+Another reason to get rid of `GetHashCode` is that it cannot be safely overriden on mutable objects. (Or more specifically, on mutable values in an object.)
+
+Moving up the stack, we look at `Colour` itself. The first problem is the empty static constructor. That just needs to go away as it hurts performance for no benefit.
+
+Next is the private, parameterless constructor. Being private and never called, it has no reason to exist.
+
+Oh wait, it is called. But only by this disaster of a function.
+
+    public static Colour From(string code)
+    {
+        var colour = new Colour { Code = code };
+
+        if (!SupportedColours.Contains(colour))
+        {
+            throw new UnsupportedColourException(code);
+        }
+
+        return colour;
+    }
+
+The first change I would make is to use the `Colour(string code)` constructor like it does everywhere else in the file. It makes no sense that this one method decided to use `new Colour { Code = code }` instead of `new Colour(code)`.
+
+Then I would delete the line entierly and repalce it with:
+
+    var colour = SupportedColours.FirstOrDefault(c => c.Code == code);
+
+If you are going to look up an immutable object anyways, you might as well return it. Otherwise, you could have just used a normal constructor instead of a static factory method.
+
+Then I would ask, "Why are we restricting colors in the first place?". What harm is there in letting the user pick their own color?
+
+Next up this this property.
+
+    public string Code { get; private set; } = "#000000";
+
+You should change that from `private set` to `init`, but the old pattern isn't really bad, just old fashioned.
+
+What we should be more concerned about is `"#000000"`. Why is the property being initialized to an invalid value? That color is not on the approved list. And why does it need to be initialized at all when the value is going to be set by the constructor?
+
+    protected static IEnumerable<Colour> SupportedColours
+
+First, this should be marked as `private`, not `protected`. The `Colour` class was not designed to be inherited from.
+
+It should return a `Dictionary<string, colour>` so that color codes can be quickly checked. Enumerating the list of colors is not expensive in time because the list is so short, but it's still a bad practice when a more apporpriate data structure is avaiable.
+
+Better yet, it should use an `ImmutableDictionary<string, colour>` since the list can never change and the items in the list are also immutable.
+
+If you decide to not remove the constructor call in `From(string)`, you could even use an `ImmutableHashSet<string>`. 
+
+Next on the list are the conversion operators.
+
+    public static implicit operator string(Colour colour)
+    public static explicit operator Colour(string code)
+
+One can make good arguments for and against the idea of being able to convert between a `string` and a `Colour` object, but those arguments are moot because these conversions are not used anywhere in the code. So they are going to be deleted too.
+
+In the end, all of these complaints were meaningless. What we should have done first is check the UI to see if anything actually used `Colour` in the first place. It doesn't. So `Colour`, `ValueObject`, and their ancellary code can all be deleted.
 
 
 *****
