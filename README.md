@@ -333,6 +333,33 @@ One can make good arguments for and against the idea of being able to convert be
 In the end, all of these complaints were meaningless. What we should have done first is check the UI to see if anything actually used `Colour` in the first place. It doesn't. So `Colour`, `ValueObject`, and their ancellary code can all be deleted.
 
 
+## Round 19 - Audit Columns
+
+This is an easy one, just a simple bug in the audit columns.
+
+        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedBy = _currentUserService.UserId;
+                    entry.Entity.Created = _dateTime.Now;
+                    break;
+
+                case EntityState.Modified:
+                    entry.Entity.LastModifiedBy = _currentUserService.UserId;
+                    entry.Entity.LastModified = _dateTime.Now;
+                    break;
+            }
+        }
+
+As you can see, they are forgetting to set the `LastModifiedBy` and `LastModified` columns when creating a new record. You can work around this in SQL by using `ISNULL(LastModifiedBy, CreatedBy)`, but you won't need to if you fix the code above.
+
+Strangely, the test for this was expecting the bug, suggesting that it was a design mistake rather than a coding mistake. 
+
+Another thing to note about this test is `_dateTime`, which is an `IDateTime` object. This is weird because all of the tests use `System.DateTime` instead of providing a mock `IDateTime`. It is perfectly acceptable to use `System.DateTime` in most testing scenarios. It is also perfectly acceptable to use `IDateTime` in testing. But to setup for one and yet still use the other is just sloppy.
+
+
 *****
 
 
