@@ -80,14 +80,14 @@ Fixing all of these issues is a bit much for one round. So we're just going to d
 
 Having only one or two classes per namespace is a sign of poor organization. It makes it harder to follow the list of `using` directives unnecessarily long. For example, consider this list from the `TodoItemsController` class.
 
-```
+````csharp
 using CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem;
 using CleanArchitecture.Application.TodoItems.Commands.DeleteTodoItem;
 using CleanArchitecture.Application.TodoItems.Commands.UpdateTodoItem;
 using CleanArchitecture.Application.TodoItems.Commands.UpdateTodoItemDetail;
 using CleanArchitecture.Application.TodoItems.Queries.GetTodoItemsWithPagination;
 
-```
+````
 
 Those five namespaces could be rolled into one to reduce verbosity and make it easier to look at multiple, related classes at once.
 
@@ -247,28 +247,30 @@ There is one outlier, the `ValueObjects` folder. That has some interesting thing
 To put it bluntly, `Colour` and its base class are hot mess. We'll start with `ValueObject`.
 
 Consider these signatures.
-
-    protected static bool EqualOperator(ValueObject left, ValueObject right)
-    protected static bool NotEqualOperator(ValueObject left, ValueObject right)
-
+````csharp
+protected static bool EqualOperator(ValueObject left, ValueObject right)
+protected static bool NotEqualOperator(ValueObject left, ValueObject right)
+````
 What are these? If you aren't paying close attention, they appear as though they are overriding the `==` and `!=` operator. But that's not the case. And if you look at the Microsoft article where they got this class, you can see it isn't used anywhere in the official example either. Basically, it just exists to confuse the reader. So they have to be deleted.
 
 Next let’s look at `Equals`. 
 
 
-    protected abstract IEnumerable<object> GetEqualityComponents();
+````csharp
+protected abstract IEnumerable<object> GetEqualityComponents();
 
-    public override bool Equals(object? obj)
+public override bool Equals(object? obj)
+{
+    if (obj == null || obj.GetType() != GetType())
     {
-        if (obj == null || obj.GetType() != GetType())
-        {
-            return false;
-        }
-
-        var other = (ValueObject)obj;
-        return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
+        return false;
     }
 
+    var other = (ValueObject)obj;
+    return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
+}
+
+````
 This needs to allocate an `IEnumerable<object>` and a `IEnumerator<object>` every time you perform an equality check? And if any of the properties on the subclass are value types, those will trigger further allocations due to boxing. 
 
 This is just madness. While it would be nice to have a generic base class that handles equality checks, this isn't the way to do it. Equality operations need to be fast and allocation-free because they are often called inside a tight loop.
@@ -283,37 +285,43 @@ Next is the private, parameterless constructor. Being private and never called, 
 
 Oh wait, it is called. But only by this disaster of a function.
 
-    public static Colour From(string code)
+````csharp
+public static Colour From(string code)
+{
+    var colour = new Colour { Code = code };
+
+    if (!SupportedColours.Contains(colour))
     {
-        var colour = new Colour { Code = code };
-
-        if (!SupportedColours.Contains(colour))
-        {
-            throw new UnsupportedColourException(code);
-        }
-
-        return colour;
+        throw new UnsupportedColourException(code);
     }
+
+    return colour;
+}
+````
 
 The first change I would make is to use the `Colour(string code)` constructor like it does everywhere else in the file. It makes no sense that this one method decided to use `new Colour { Code = code }` instead of `new Colour(code)`.
 
 Then I would delete the line entierly and repalce it with:
 
-    var colour = SupportedColours.FirstOrDefault(c => c.Code == code);
+````csharp
+var colour = SupportedColours.FirstOrDefault(c => c.Code == code);
+````
 
 If you are going to look up an immutable object anyways, you might as well return it. Otherwise, you could have just used a normal constructor instead of a static factory method.
 
 Then I would ask, "Why are we restricting colors in the first place?". What harm is there in letting the user pick their own color?
 
 Next up this this property.
-
-    public string Code { get; private set; } = "#000000";
-
+````csharp
+public string Code { get; private set; } = "#000000";
+````
 You should change that from `private set` to `init`, but the old pattern isn't really bad, just old fashioned.
 
 What we should be more concerned about is `"#000000"`. Why is the property being initialized to an invalid value? That color is not on the approved list. And why does it need to be initialized at all when the value is going to be set by the constructor?
 
-    protected static IEnumerable<Colour> SupportedColours
+````csharp
+protected static IEnumerable<Colour> SupportedColours
+````
 
 First, this should be marked as `private`, not `protected`. The `Colour` class was not designed to be inherited from.
 
@@ -324,10 +332,10 @@ Better yet, it should use an `ImmutableDictionary<string, colour>` since the lis
 If you decide to not remove the constructor call in `From(string)`, you could even use an `ImmutableHashSet<string>`. 
 
 Next on the list are the conversion operators.
-
+````csharp
     public static implicit operator string(Colour colour)
     public static explicit operator Colour(string code)
-
+````
 One can make good arguments for and against the idea of being able to convert between a `string` and a `Colour` object, but those arguments are moot because these conversions are not used anywhere in the code. So they are going to be deleted too.
 
 In the end, all of these complaints were meaningless. What we should have done first is check the UI to see if anything actually used `Colour` in the first place. It doesn't. So `Colour`, `ValueObject`, and their ancellary code can all be deleted.
@@ -336,23 +344,24 @@ In the end, all of these complaints were meaningless. What we should have done f
 ## Round 19 - Audit Columns
 
 This is an easy one, just a simple bug in the audit columns.
+````csharp
+foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+{
+    switch (entry.State)
+    {
+        case EntityState.Added:
+            entry.Entity.CreatedBy = _currentUserService.UserId;
+            entry.Entity.Created = _dateTime.Now;
+            break;
 
-        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-        {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedBy = _currentUserService.UserId;
-                    entry.Entity.Created = _dateTime.Now;
-                    break;
+        case EntityState.Modified:
+            entry.Entity.LastModifiedBy = _currentUserService.UserId;
+            entry.Entity.LastModified = _dateTime.Now;
+            break;
+    }
+}
 
-                case EntityState.Modified:
-                    entry.Entity.LastModifiedBy = _currentUserService.UserId;
-                    entry.Entity.LastModified = _dateTime.Now;
-                    break;
-            }
-        }
-
+````
 As you can see, they are forgetting to set the `LastModifiedBy` and `LastModified` columns when creating a new record. You can work around this in SQL by using `ISNULL(LastModifiedBy, CreatedBy)`, but you won't need to if you fix the code above.
 
 Strangely, the test for this was expecting the bug, suggesting that it was a design mistake rather than a coding mistake. 
